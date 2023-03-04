@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 
+const SELECT_OPTIONS = [{ value: 3 }, { value: 4 }, { value: 5 }];
+
 const PaginationExample = ({ items }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(SELECT_OPTIONS[0].value);
   const pageCount = Math.ceil(items.length / itemsPerPage);
 
   useEffect(() => {
@@ -25,11 +27,7 @@ const PaginationExample = ({ items }) => {
     const pageNumbers = [];
     for (let i = 1; i <= pageCount; i++) {
       pageNumbers.push(
-        <button
-          key={i}
-          onClick={() => handlePageClick(i)}
-          className={currentPage === i ? "active" : ""}
-        >
+        <button key={i} onClick={() => handlePageClick(i)}>
           {i}
         </button>
       );
@@ -40,20 +38,32 @@ const PaginationExample = ({ items }) => {
   return (
     <div>
       <div className="item-list">{renderItems()}</div>
-      <div className="pagination">{renderPageNumbers()}</div>
-      <select
-        value={itemsPerPage}
-        onChange={(e) => setItemsPerPage(parseInt(e.target.value))}
-      >
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
-      </select>
+      <div style={{ display: "flex", gap: "1rem" }}>
+        <div className="pagination">{renderPageNumbers()}</div>
+        <Select
+          options={SELECT_OPTIONS}
+          onChange={(e) => setItemsPerPage(parseInt(e.target.value))}
+          label="Show per page"
+        />
+      </div>
     </div>
   );
 };
+
+function Select({ label, options, ...restProps }) {
+  return (
+    <>
+      <label>{label}</label>
+      <select {...restProps}>
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.value}
+          </option>
+        ))}
+      </select>
+    </>
+  );
+}
 
 export default function App() {
   const items = [
@@ -71,7 +81,7 @@ export default function App() {
     { id: 12, text: "Item 12" },
     { id: 13, text: "Item 13" },
     { id: 14, text: "Item 14" },
-    { id: 15, text: "Item 15" }
+    { id: 15, text: "Item 15" },
   ];
 
   return (
